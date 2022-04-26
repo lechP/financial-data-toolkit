@@ -1,7 +1,7 @@
 package com.lpi.fdt.currencies
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.lpi.fdt.config.createObjectMapper
+import java.math.BigDecimal
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -15,7 +15,7 @@ class NBPClient {
 
     private val baseUrl = "http://api.nbp.pl/api/exchangerates/rates/a"
 
-    fun getCurrencyRates(symbol: String, dateFrom: LocalDate, dateTo: LocalDate): NBPCurrencyRatesResponse {
+    fun getCurrencyExchangeRates(symbol: String, dateFrom: LocalDate, dateTo: LocalDate): NBPCurrencyRatesResponse {
         val url = "$baseUrl/$symbol/$dateFrom/$dateTo"
         val request = HttpRequest.newBuilder(URI.create(url)).header("accept", "application/json").build()
         val client = HttpClient.newBuilder().build()
@@ -35,5 +35,5 @@ data class NBPCurrencyRatesResponse(
 data class NBPCurrencyRate(
     val no: String,
     val effectiveDate: LocalDate,
-    val mid: Double //TODO BigDecimal
+    val mid: BigDecimal
 )
