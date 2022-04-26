@@ -12,7 +12,8 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2'
+    api group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.13.2'
+    api group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.2'
 }
 
 application {
