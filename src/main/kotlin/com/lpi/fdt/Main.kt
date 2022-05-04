@@ -9,9 +9,17 @@ import java.time.LocalDate
 
 fun main() {
 
-    /** Get currency rates against PLN from Polish National Bank (via its API) and export results to CSV file */
+    val startDate = LocalDate.of(2022, 4, 1)
+    val endDate = LocalDate.of(2022, 5, 4)
 
-    val currencyRates = NBPClient().getCurrencyExchangeRates("USD", LocalDate.of(2022, 1, 1), LocalDate.of(2022, 4, 26))
+    writeCurrencyRates("EUR", startDate, endDate)
+    writeCurrencyRates("USD", startDate, endDate)
+
+}
+
+/** Get currency rates against PLN from Polish National Bank (via its API) and export results to CSV file */
+fun writeCurrencyRates(symbol: String, startDate: LocalDate, endDate: LocalDate) {
+    val currencyRates = NBPClient().getCurrencyExchangeRates(symbol, startDate, endDate)
 
     CsvCurrencyWriter.writeToFile(
         CsvExportInput(
