@@ -1,0 +1,6 @@
+GET http://localhost:8080/currency-rates?symbol=EUR&dateFrom=2022-04-01&dateTo=2022-05-04
+Accept: application/json
+
+### invalid query params
+GET http://localhost:8080/currency-rates?symbol=EUR&dateFrom=2022-04-01&dateTo=xd
+Accept: application/json
