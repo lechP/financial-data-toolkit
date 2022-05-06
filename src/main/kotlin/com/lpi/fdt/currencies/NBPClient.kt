@@ -1,11 +1,17 @@
 package com.lpi.fdt.currencies
 
-import com.lpi.fdt.config.createObjectMapper
+import com.lpi.fdt.serialization.BigDecimalSerializer
+import com.lpi.fdt.serialization.LocalDateSerializer
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import java.math.BigDecimal
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.time.LocalDate
 
 /**
@@ -15,16 +21,23 @@ class NBPClient {
 
     private val baseUrl = "http://api.nbp.pl/api/exchangerates/rates/a"
 
-    fun getCurrencyExchangeRates(symbol: String, dateFrom: LocalDate, dateTo: LocalDate): NBPCurrencyRatesResponse {
-        val url = "$baseUrl/$symbol/$dateFrom/$dateTo"
-        val request = HttpRequest.newBuilder(URI.create(url)).header("accept", "application/json").build()
-        val client = HttpClient.newBuilder().build()
-        val json = client.send(request, HttpResponse.BodyHandlers.ofString()).body()
-        return createObjectMapper().readValue(json, NBPCurrencyRatesResponse::class.java)
+    suspend fun getCurrencyExchangeRates(symbol: String, dateFrom: LocalDate, dateTo: LocalDate): NBPCurrencyRatesResponse {
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                })
+            }
+        }
+        return client.get("$baseUrl/$symbol/$dateFrom/$dateTo") {
+            accept(ContentType.Application.Json)
+        }.body()
     }
 
 }
 
+@Serializable
 data class NBPCurrencyRatesResponse(
     val table: String,
     val currency: String,
@@ -32,8 +45,11 @@ data class NBPCurrencyRatesResponse(
     val rates: List<NBPCurrencyRate>
 )
 
+@Serializable
 data class NBPCurrencyRate(
     val no: String,
+    @Serializable(with = LocalDateSerializer::class)
     val effectiveDate: LocalDate,
+    @Serializable(with = BigDecimalSerializer::class)
     val mid: BigDecimal
 )
