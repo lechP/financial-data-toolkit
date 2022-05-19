@@ -10,8 +10,8 @@ import java.time.LocalDate
 
 fun main() {
 
-    val startDate = LocalDate.of(2022, 4, 1)
-    val endDate = LocalDate.of(2022, 5, 4)
+    val startDate = LocalDate.of(2022, 5, 1)
+    val endDate = LocalDate.of(2022, 5, 12)
 
     runBlocking {
         writeCurrencyRates("EUR", startDate, endDate)
