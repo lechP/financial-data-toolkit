@@ -7,42 +7,24 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import java.math.BigDecimal
-import java.time.LocalDate
 
 // TODO update KTOR
-// TODO client calling Stooq for investment fund pricing
 // TODO reuse take common part of ktor
 
-class StooqClient {
+// TODO make the whole thing runnable from console without intelliJ
+
+// TODO expose endpoint to gather this data as well as currencies?
+// TODO introduce some dummy cache or maybe move it all to Budgy?
+
+interface StocksClient {
+    suspend fun getValueHistory(symbol: String): String
+}
+class StooqClient: StocksClient {
 
     private val baseUrl = "https://stooq.pl/q/d/l/"
 
-    // TODO split into pure client and sort of a facade to properly test it
-
-    suspend fun getHistoricalValues(symbol: String): List<StooqRecord> =
-        getHistoricalValuesRaw(symbol).parseStooqResponse()
-
-    private fun String.parseStooqResponse() =
-        split("\r\n").drop(1).filter { it.isNotBlank() }.map { it.toStooqRecord() }
-
-    private fun String.toStooqRecord(): StooqRecord {
-        println(this)
-        return split(",").let {
-            StooqRecord(
-                date = LocalDate.parse(it[0]),
-                open = BigDecimal(it[1]),
-                max = BigDecimal(it[2]),
-                min = BigDecimal(it[3]),
-                close = BigDecimal(it[4]),
-                volume = if (it.size > 5) BigDecimal(it[5]) else null
-            )
-        }
-    }
-
-    private suspend fun getHistoricalValuesRaw(symbol: String): String {
+    override suspend fun getValueHistory(symbol: String): String {
         val client = HttpClient(CIO) {
             install(ContentNegotiation) {
                 json(Json {
@@ -59,19 +41,3 @@ class StooqClient {
     }
 
 }
-
-fun main() {
-
-    runBlocking {
-        println(StooqClient().getHistoricalValues("PKN"))
-    }
-}
-
-data class StooqRecord(
-    val date: LocalDate,
-    val open: BigDecimal,
-    val max: BigDecimal,
-    val min: BigDecimal,
-    val close: BigDecimal,
-    val volume: BigDecimal?
-)
