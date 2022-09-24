@@ -39,7 +39,7 @@ data class StockDailyRecord(
 )
 
 fun main() {
-    val client = StooqClient()
+    val client = DummyStooqClient()
     val service = StocksFacade(client)
 
     runBlocking {
