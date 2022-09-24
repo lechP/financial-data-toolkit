@@ -1,9 +1,10 @@
-GET http://localhost:8080/currency-rates?symbol=EUR&dateFrom=2022-04-01&dateTo=2022-05-04
+GET http://localhost:8081/currency-rates?symbol=EUR&dateFrom=2022-08-01&dateTo=2022-08-10
 Accept: application/json
 
 ### invalid query params
-GET http://localhost:8080/currency-rates?symbol=EUR&dateFrom=2022-04-01&dateTo=xd
+GET http://localhost:8081/currency-rates?symbol=EUR&dateFrom=2022-04-01&dateTo=xd
 Accept: application/json
 
 ### CSV
-GET http://localhost:8080/currency-rates/csv?symbol=EUR&dateFrom=2022-05-01&dateTo=2022-05-19
+GET http://localhost:8081/currency-rates?symbol=EUR&dateFrom=2022-08-01&dateTo=2022-08-10
+Accept: text/csv

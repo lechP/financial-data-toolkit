@@ -1,13 +1,13 @@
 package com.lpi.fdt.routes
 
 import com.lpi.fdt.currencies.NBPClient
+import com.lpi.fdt.currencies.NBPCurrencyRatesResponse
 import com.lpi.fdt.export.CsvCurrencyWriter
 import com.lpi.fdt.export.CsvExchangeRateRecord
 import com.lpi.fdt.export.CsvExportInput
 import com.lpi.fdt.serialization.BigDecimalSerializer
 import com.lpi.fdt.serialization.LocalDateSerializer
 import io.ktor.http.*
-import io.ktor.http.ContentDisposition.Companion.File
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -28,46 +28,47 @@ fun Route.currencyRateRouting() {
 
             val currencyRates = NBPClient().getCurrencyExchangeRates(symbol, dateFrom, dateTo)
 
-            val response = CurrencyRatesResponse(
-                currencyCode = currencyRates.code,
-                exchangeRates = currencyRates.rates.map {
-                    CurrencyRate(
-                        effectiveDate = it.effectiveDate,
-                        exchangeRate = it.mid
+            when (call.request.headers[HttpHeaders.Accept]) {
+                ContentType.Application.Json.toString() -> {
+                    println("I'm in application/json")
+                    call.respond(jsonResponse(currencyRates))
+                }
+                ContentType.Text.CSV.toString() -> {
+                    println("I'm in csv")
+                    val filename = csvResponse(currencyRates)
+                    val file = File(filename)
+                    call.response.header(
+                        HttpHeaders.ContentDisposition,
+                        ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, filename)
+                            .toString()
                     )
-                })
+                    call.respondFile(file)
+                }
+                else -> {
+                    call.respond(jsonResponse(currencyRates))
+                }
+            }
 
-            call.respond(response)
         }
 
-        // TODO should be the same GET and JSON/CSV should be decided based on accept header
-        get("/csv") {
-            val symbol = call.request.queryParameters["symbol"] ?: "USD"
-            val rawDateFrom = call.request.queryParameters["dateFrom"]
-            val dateFrom = LocalDate.parse(rawDateFrom)
-            val rawDateTo = call.request.queryParameters["dateTo"]
-            val dateTo = LocalDate.parse(rawDateTo)
-
-            val currencyRates = NBPClient().getCurrencyExchangeRates(symbol, dateFrom, dateTo)
-
-            CsvCurrencyWriter.writeToFile(
-                CsvExportInput(
-                    currencyCode = currencyRates.code,
-                    exchangeRates = currencyRates.rates.map { CsvExchangeRateRecord(it.effectiveDate, it.mid) }
-                )
-            )
-
-            val filename = "PLNto${symbol}.csv" // TODO name should be result of Csv..Writer
-            val file = File(filename)
-            call.response.header(
-                HttpHeaders.ContentDisposition,
-                ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, filename)
-                    .toString()
-            )
-            call.respondFile(file)
-        }
     }
 }
+private fun csvResponse(currencyRates: NBPCurrencyRatesResponse): String = CsvCurrencyWriter.writeToFile(
+    CsvExportInput(
+        currencyCode = currencyRates.code,
+        exchangeRates = currencyRates.rates.map { CsvExchangeRateRecord(it.effectiveDate, it.mid) }
+    )
+)
+
+private fun jsonResponse(currencyRates: NBPCurrencyRatesResponse) = CurrencyRatesResponse(
+    currencyCode = currencyRates.code,
+    exchangeRates = currencyRates.rates.map {
+        CurrencyRate(
+            effectiveDate = it.effectiveDate,
+            exchangeRate = it.mid
+        )
+    })
+
 
 @Serializable
 data class CurrencyRatesResponse(

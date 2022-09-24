@@ -10,11 +10,13 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 object CsvCurrencyWriter {
-    fun writeToFile(input: CsvExportInput) {
-        val writer: Writer = FileWriter("PLNto${input.currencyCode}.csv")
+    fun writeToFile(input: CsvExportInput): String {
+        val filename = "PLNto${input.currencyCode}.csv"
+        val writer: Writer = FileWriter(filename)
         val beanToCsv = StatefulBeanToCsvBuilder<CsvExchangeRateRecord>(writer).withApplyQuotesToAll(false).build()
         beanToCsv.write(input.exchangeRates)
         writer.close()
+        return filename
     }
 }
 
