@@ -24,12 +24,23 @@ dependencies {
     implementation "io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version"
     implementation "io.ktor:ktor-server-netty-jvm:$ktor_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
+
     testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation group: 'io.mockk', name: 'mockk', version: '1.12.4'
+    testImplementation group: 'io.kotest', name: 'kotest-assertions-core-jvm', version: '5.3.2'
 }
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
     applicationDefaultJvmArgs = ["-Dio.ktor.development=${project.ext.has("development")}"]
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
