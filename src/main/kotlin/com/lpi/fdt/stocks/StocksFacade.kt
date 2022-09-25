@@ -7,7 +7,6 @@ import java.time.LocalDate
 class StocksFacade(
     private val stocksClient: StocksClient
 ) {
-    // TODO unit tests
     suspend fun getHistoricalValues(symbol: String): List<StockDailyRecord> =
         stocksClient.getValueHistory(symbol)
             .parseStockClientResponse()
