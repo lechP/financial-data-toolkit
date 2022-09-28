@@ -1,5 +1,8 @@
 package com.lpi.fdt.stocks
 
+import com.lpi.fdt.export.CsvStockPriceRecord
+import com.lpi.fdt.export.CsvStocksWriter
+import com.lpi.fdt.export.StocksCsvWriterInput
 import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -38,10 +41,18 @@ data class StockDailyRecord(
 )
 
 fun main() {
-    val client = DummyStooqClient()
+    val client = StooqClient()
     val service = StocksFacade(client)
 
+    val symbol = "PKN"
+
     runBlocking {
-        println(service.getHistoricalValues("PKN"))
+        val valuations = service.getHistoricalValues(symbol)
+        CsvStocksWriter.writeToFile(
+            StocksCsvWriterInput(
+                symbol = symbol,
+                valuations = valuations.map { CsvStockPriceRecord(it.date, it.close) }
+            )
+        )
     }
 }
