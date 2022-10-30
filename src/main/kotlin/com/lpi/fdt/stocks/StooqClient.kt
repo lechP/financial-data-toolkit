@@ -1,7 +1,7 @@
 package com.lpi.fdt.stocks
 
 import io.ktor.client.*
-import io.ktor.client.call.*
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -20,7 +20,8 @@ import kotlinx.serialization.json.Json
 interface StocksClient {
     suspend fun getValueHistory(symbol: String): String
 }
-class StooqClient: StocksClient {
+
+class StooqClient : StocksClient {
 
     private val baseUrl = "https://stooq.pl/q/d/l/"
 
@@ -42,7 +43,7 @@ class StooqClient: StocksClient {
 
 }
 
-class DummyStooqClient: StocksClient {
+class DummyStooqClient : StocksClient {
     override suspend fun getValueHistory(symbol: String): String =
         "initial,row,to,be,ignored\r\n2022-08-01,10.00,11.00,9.95,10.20,4000\r\n2022-08-02,10.10,10.10,9.35,9.50,2000"
 

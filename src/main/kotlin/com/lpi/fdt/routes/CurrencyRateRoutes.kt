@@ -33,6 +33,7 @@ fun Route.currencyRateRouting() {
                     println("I'm in application/json")
                     call.respond(jsonResponse(currencyRates))
                 }
+
                 ContentType.Text.CSV.toString() -> {
                     println("I'm in csv")
                     val filename = csvResponse(currencyRates)
@@ -44,6 +45,7 @@ fun Route.currencyRateRouting() {
                     )
                     call.respondFile(file)
                 }
+
                 else -> {
                     call.respond(jsonResponse(currencyRates))
                 }
@@ -53,6 +55,7 @@ fun Route.currencyRateRouting() {
 
     }
 }
+
 private fun csvResponse(currencyRates: NBPCurrencyRatesResponse): String = CsvCurrencyWriter.writeToFile(
     CsvExportInput(
         currencyCode = currencyRates.code,

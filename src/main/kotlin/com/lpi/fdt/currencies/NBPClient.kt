@@ -3,7 +3,7 @@ package com.lpi.fdt.currencies
 import com.lpi.fdt.serialization.BigDecimalSerializer
 import com.lpi.fdt.serialization.LocalDateSerializer
 import io.ktor.client.*
-import io.ktor.client.call.*
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -21,7 +21,11 @@ class NBPClient {
 
     private val baseUrl = "http://api.nbp.pl/api/exchangerates/rates/a"
 
-    suspend fun getCurrencyExchangeRates(symbol: String, dateFrom: LocalDate, dateTo: LocalDate): NBPCurrencyRatesResponse {
+    suspend fun getCurrencyExchangeRates(
+        symbol: String,
+        dateFrom: LocalDate,
+        dateTo: LocalDate
+    ): NBPCurrencyRatesResponse {
         val client = HttpClient(CIO) {
             install(ContentNegotiation) {
                 json(Json {
