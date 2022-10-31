@@ -1,6 +1,6 @@
 package com.lpi.fdt
 
-import com.lpi.fdt.currencies.NBPClient
+import com.lpi.fdt.quotations.currencies.NBPClient
 import com.lpi.fdt.export.CsvExchangeRateRecord
 import com.lpi.fdt.export.CsvCurrencyWriter
 import com.lpi.fdt.export.CsvExportInput

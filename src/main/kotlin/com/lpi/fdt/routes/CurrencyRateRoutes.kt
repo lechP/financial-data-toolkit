@@ -1,7 +1,7 @@
 package com.lpi.fdt.routes
 
-import com.lpi.fdt.currencies.NBPClient
-import com.lpi.fdt.currencies.NBPCurrencyRatesResponse
+import com.lpi.fdt.quotations.currencies.NBPClient
+import com.lpi.fdt.quotations.currencies.NBPCurrencyRatesResponse
 import com.lpi.fdt.export.CsvCurrencyWriter
 import com.lpi.fdt.export.CsvExchangeRateRecord
 import com.lpi.fdt.export.CsvExportInput

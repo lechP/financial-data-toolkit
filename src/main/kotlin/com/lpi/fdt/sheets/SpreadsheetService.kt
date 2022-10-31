@@ -61,7 +61,7 @@ object SpreadsheetService {
 
 fun main() {
     val spreadsheetId = Config().demoSpreadsheetId
-    val range = "in!B4:E"
+    val range = "USDtoPLN"
 
     val response = SpreadsheetService.instance().spreadsheets().values()[spreadsheetId, range]
         .execute()
@@ -71,20 +71,30 @@ fun main() {
     } else {
         println("description, amount")
         values.forEach { row ->
-            // Print columns A and E, which correspond to indices 0 and 4.
-            // println(row)
-            println("${row[0]}, ${row[3]}")
+            println("${row[0]}, ${row[1]}")
         }
     }
 
     // write example
     val range2 = "fx!B193"
-    val input = listOf(listOf(LocalDate.now().toString()))
+    val input = listOf(listOf(LocalDate.now().toString(), 4.9000))
     val body: ValueRange = ValueRange().setValues(input)
-    val result = SpreadsheetService.instance().spreadsheets().values().update(spreadsheetId, range2, body)
+    val result = SpreadsheetService.instance().spreadsheets().values().append(spreadsheetId, range, body)
         .setValueInputOption("USER_ENTERED")
         .execute()
 
-    println("${result.updatedCells} updated")
+    println("${result.tableRange} updated")
 
 }
+
+/*
+TODO
+ I. CURRENCIES
+    I want:
+    1. take last record from spreadsheet and check the DateN
+    2. get fx data for date range [DateN, today()]
+    3. append the data to the spreadsheet
+    repeat the operation for USD and EUR
+ II. STOCKS
+    Actually I want the same thing
+ */

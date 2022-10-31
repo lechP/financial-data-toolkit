@@ -1,4 +1,4 @@
-package com.lpi.fdt.stocks
+package com.lpi.fdt.quotations.stocks
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
@@ -26,7 +26,7 @@ internal class StocksFacadeTest {
 
         result shouldHaveSize 1
         with(result[0]) {
-            date shouldBe LocalDate.of(2022,8,1)
+            date shouldBe LocalDate.of(2022, 8, 1)
             open shouldBe BigDecimal("10.00")
             max shouldBe BigDecimal("11.00")
             min shouldBe BigDecimal("9.95")
@@ -46,7 +46,7 @@ internal class StocksFacadeTest {
 
         result shouldHaveSize 1
         with(result[0]) {
-            date shouldBe LocalDate.of(2022,8,1)
+            date shouldBe LocalDate.of(2022, 8, 1)
             open shouldBe BigDecimal("10.00")
             max shouldBe BigDecimal("11.00")
             min shouldBe BigDecimal("9.95")

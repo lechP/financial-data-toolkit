@@ -1,4 +1,4 @@
-package com.lpi.fdt.currencies
+package com.lpi.fdt.quotations.currencies
 
 import com.lpi.fdt.serialization.BigDecimalSerializer
 import com.lpi.fdt.serialization.LocalDateSerializer

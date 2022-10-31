@@ -1,4 +1,4 @@
-package com.lpi.fdt.stocks
+package com.lpi.fdt.quotations.stocks
 
 import io.ktor.client.*
 import io.ktor.client.call.body

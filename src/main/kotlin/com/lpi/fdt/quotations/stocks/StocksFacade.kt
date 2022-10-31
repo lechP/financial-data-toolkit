@@ -1,4 +1,4 @@
-package com.lpi.fdt.stocks
+package com.lpi.fdt.quotations.stocks
 
 import com.lpi.fdt.export.CsvStockPriceRecord
 import com.lpi.fdt.export.CsvStocksWriter
