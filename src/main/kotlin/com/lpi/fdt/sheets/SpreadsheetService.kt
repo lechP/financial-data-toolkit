@@ -10,8 +10,10 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import com.google.api.services.sheets.v4.model.ValueRange
 import com.lpi.fdt.config.Config
 import java.io.File
+import java.time.LocalDate
 
 private const val tokensDirectoryPath = "tokens"
 
@@ -74,4 +76,15 @@ fun main() {
             println("${row[0]}, ${row[3]}")
         }
     }
+
+    // write example
+    val range2 = "fx!B193"
+    val input = listOf(listOf(LocalDate.now().toString()))
+    val body: ValueRange = ValueRange().setValues(input)
+    val result = SpreadsheetService.instance().spreadsheets().values().update(spreadsheetId, range2, body)
+        .setValueInputOption("USER_ENTERED")
+        .execute()
+
+    println("${result.updatedCells} updated")
+
 }
