@@ -12,6 +12,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.lpi.fdt.config.Config
+import com.lpi.fdt.quotations.currencies.NBPClient
 import java.io.File
 import java.time.LocalDate
 
@@ -59,33 +60,38 @@ object SpreadsheetService {
 
 }
 
-fun main() {
+suspend fun main() {
+    updateCurrencyRates("USD")
+    updateCurrencyRates("EUR")
+
+}
+
+suspend fun updateCurrencyRates(symbol: String) {
     val spreadsheetId = Config().demoSpreadsheetId
-    val range = "USDtoPLN"
+    val range = "${symbol}toPLN"
+    val lastDate = getLastDate(spreadsheetId, range)
+    // TODO check if range is > 0 | test "should not call if range is empty
+    val currencyRates = NBPClient().getCurrencyExchangeRates(symbol, lastDate.plusDays(1), LocalDate.now())
+    val currencyInput = currencyRates.rates.map { listOf(it.effectiveDate.toString(), it.mid)}
+    // write values
+    appendValues(spreadsheetId, range, currencyInput)
+}
 
-    val response = SpreadsheetService.instance().spreadsheets().values()[spreadsheetId, range]
-        .execute()
-    val values = response.getValues()
-    if (values == null || values.isEmpty()) {
-        println("No data found.")
-    } else {
-        println("description, amount")
-        values.forEach { row ->
-            println("${row[0]}, ${row[1]}")
-        }
-    }
-
-    // write example
-    val range2 = "fx!B193"
-    val input = listOf(listOf(LocalDate.now().toString(), 4.9000))
-    val body: ValueRange = ValueRange().setValues(input)
+fun appendValues(spreadsheetId: String, range: String, values: List<List<Any>>) {
+    val body: ValueRange = ValueRange().setValues(values)
     val result = SpreadsheetService.instance().spreadsheets().values().append(spreadsheetId, range, body)
         .setValueInputOption("USER_ENTERED")
         .execute()
-
-    println("${result.tableRange} updated")
-
+    // TODO logger
+    println("${result.updates.updatedRows} rows updated")
 }
+
+fun getLastDate(spreadsheetId: String, range: String): LocalDate =
+    LocalDate.parse(getRangeValues(spreadsheetId, range).last()[0] as String)
+
+fun getRangeValues(spreadsheetId: String, range: String): List<List<Any>> =
+    SpreadsheetService.instance().spreadsheets().values()[spreadsheetId, range]
+        .execute().getValues()
 
 /*
 TODO
