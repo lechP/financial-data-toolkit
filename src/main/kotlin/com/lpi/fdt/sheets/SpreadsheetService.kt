@@ -13,6 +13,8 @@ import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.lpi.fdt.config.Config
 import com.lpi.fdt.quotations.currencies.NBPClient
+import com.lpi.fdt.quotations.stocks.StocksFacade
+import com.lpi.fdt.quotations.stocks.StooqClient
 import java.io.File
 import java.time.LocalDate
 
@@ -64,10 +66,24 @@ suspend fun main() {
     updateCurrencyRates("USD")
     updateCurrencyRates("EUR")
 
+    updateStockQuotations()
+
+}
+
+suspend fun updateStockQuotations() {
+    val spreadsheetId = Config().stocksSpreadsheetId
+    // for now single quotation; ultimately should iterate over array taken from props
+    val stockData = Config().stockSpreadsheetData
+    val lastDate = getLastDate(spreadsheetId, stockData.spreadsheetRange)
+
+    val stocksFacade = StocksFacade(StooqClient())
+    val results = stocksFacade.getHistoricalValues(stockData.symbol).filter { it.date > lastDate }
+    val stocksInput = results.map { listOf(it.date.toString(), it.close)}
+    appendValues(spreadsheetId, stockData.spreadsheetRange, stocksInput)
 }
 
 suspend fun updateCurrencyRates(symbol: String) {
-    val spreadsheetId = Config().demoSpreadsheetId
+    val spreadsheetId = Config().currenciesSpreadsheetId
     val range = "${symbol}toPLN"
     val lastDate = getLastDate(spreadsheetId, range)
     // TODO check if range is > 0 | test "should not call if range is empty

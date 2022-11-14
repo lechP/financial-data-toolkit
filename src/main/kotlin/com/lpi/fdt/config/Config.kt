@@ -18,10 +18,27 @@ class Config {
         )
     }
 
-    val demoSpreadsheetId: String by lazy {
-        properties.getProperty("spreadsheetId")
+    val currenciesSpreadsheetId: String by lazy {
+        properties.getProperty("currenciesSpreadsheetId")
+    }
+
+    val stocksSpreadsheetId: String by lazy {
+        properties.getProperty("stocksSpreadsheetId")
+    }
+
+    // ultimately should be an array
+    val stockSpreadsheetData: StockSpreadsheetData by lazy {
+        StockSpreadsheetData(
+            symbol = properties.getProperty("stock.symbol"),
+            spreadsheetRange = properties.getProperty("stock.range"),
+        )
     }
 }
+
+data class StockSpreadsheetData(
+    val symbol: String,
+    val spreadsheetRange: String
+)
 
 data class GoogleCredentials(
     val clientId: String,
