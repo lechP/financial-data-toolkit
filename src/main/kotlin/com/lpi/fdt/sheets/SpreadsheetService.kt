@@ -24,7 +24,6 @@ private const val applicationName = "Financial Data Toolkit"
 
 object SpreadsheetService {
 
-    // TODO DI
     private val config = Config()
 
     /**
@@ -82,6 +81,11 @@ suspend fun updateStockQuotations() {
     appendValues(spreadsheetId, stockData.spreadsheetRange, stocksInput)
 }
 
+/**
+    1. take last record from spreadsheet and check the DateN
+    2. get fx data for date range [DateN, today()]
+    3. append the data to the spreadsheet
+ */
 suspend fun updateCurrencyRates(symbol: String) {
     val spreadsheetId = Config().currenciesSpreadsheetId
     val range = "${symbol}toPLN"
@@ -108,15 +112,3 @@ fun getLastDate(spreadsheetId: String, range: String): LocalDate =
 fun getRangeValues(spreadsheetId: String, range: String): List<List<Any>> =
     SpreadsheetService.instance().spreadsheets().values()[spreadsheetId, range]
         .execute().getValues()
-
-/*
-TODO
- I. CURRENCIES
-    I want:
-    1. take last record from spreadsheet and check the DateN
-    2. get fx data for date range [DateN, today()]
-    3. append the data to the spreadsheet
-    repeat the operation for USD and EUR
- II. STOCKS
-    Actually I want the same thing
- */

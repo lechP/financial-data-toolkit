@@ -9,13 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-// TODO update KTOR
 // TODO reuse take common part of ktor
-
-// TODO make the whole thing runnable from console without intelliJ
-
-// TODO expose endpoint to gather this data as well as currencies?
-// TODO introduce some dummy cache or maybe move it all to Budgy?
 
 interface StocksClient {
     suspend fun getValueHistory(symbol: String): String
