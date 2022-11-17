@@ -1,15 +1,9 @@
 package com.lpi.fdt.quotations.stocks
 
-import io.ktor.client.*
-import io.ktor.client.call.body
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
+import com.lpi.fdt.config.ktorClient
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
-
-// TODO reuse take common part of ktor
 
 interface StocksClient {
     suspend fun getValueHistory(symbol: String): String
@@ -19,21 +13,12 @@ class StooqClient : StocksClient {
 
     private val baseUrl = "https://stooq.pl/q/d/l/"
 
-    override suspend fun getValueHistory(symbol: String): String {
-        val client = HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                })
-            }
-        }
-        return client.get(baseUrl) {
+    override suspend fun getValueHistory(symbol: String): String =
+        ktorClient.get(baseUrl) {
             accept(ContentType.Text.CSV)
             parameter("s", symbol)
             parameter("i", "d")
         }.body() // i = interval ; s = symbol
-    }
 
 }
 

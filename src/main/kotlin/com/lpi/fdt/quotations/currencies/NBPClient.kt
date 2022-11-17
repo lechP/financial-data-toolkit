@@ -1,16 +1,12 @@
 package com.lpi.fdt.quotations.currencies
 
+import com.lpi.fdt.config.ktorClient
 import com.lpi.fdt.serialization.BigDecimalSerializer
 import com.lpi.fdt.serialization.LocalDateSerializer
-import io.ktor.client.*
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -25,19 +21,10 @@ class NBPClient {
         symbol: String,
         dateFrom: LocalDate,
         dateTo: LocalDate
-    ): NBPCurrencyRatesResponse {
-        val client = HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                })
-            }
-        }
-        return client.get("$baseUrl/$symbol/$dateFrom/$dateTo") {
+    ): NBPCurrencyRatesResponse =
+        ktorClient.get("$baseUrl/$symbol/$dateFrom/$dateTo") {
             accept(ContentType.Application.Json)
         }.body()
-    }
 
 }
 
