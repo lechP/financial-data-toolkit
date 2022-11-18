@@ -3,7 +3,7 @@ package com.lpi.fdt.config
 import java.io.FileInputStream
 import java.util.*
 
-class Config {
+class CredentialsConfig {
 
     private val properties: Properties by lazy {
         val props = Properties()

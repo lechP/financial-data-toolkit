@@ -11,7 +11,7 @@ import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.lpi.fdt.config.Config
+import com.lpi.fdt.config.CredentialsConfig
 import java.io.File
 
 private const val tokensDirectoryPath = "tokens"
@@ -20,7 +20,7 @@ private const val applicationName = "Financial Data Toolkit"
 
 object SpreadsheetService {
 
-    private val config = Config()
+    private val credentialsConfig = CredentialsConfig()
 
     /**
      * Global instance of the required scopes.
@@ -32,8 +32,8 @@ object SpreadsheetService {
         val flow = GoogleAuthorizationCodeFlow.Builder(
             transport,
             GsonFactory.getDefaultInstance(),
-            config.googleCredentials.clientId,
-            config.googleCredentials.clientSecret,
+            credentialsConfig.googleCredentials.clientId,
+            credentialsConfig.googleCredentials.clientSecret,
             authScopes
         )
             .setDataStoreFactory(FileDataStoreFactory(File(tokensDirectoryPath)))
