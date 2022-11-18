@@ -1,21 +1,39 @@
 package com.lpi.fdt
 
+import com.lpi.fdt.config.Config
 import com.lpi.fdt.quotations.currencies.NBPClient
 import com.lpi.fdt.export.CsvExchangeRateRecord
 import com.lpi.fdt.export.CsvCurrencyWriter
 import com.lpi.fdt.export.CsvExportInput
+import com.lpi.fdt.quotations.stocks.StocksFacade
+import com.lpi.fdt.quotations.stocks.StooqClient
+import com.lpi.fdt.service.DefaultDataUploadService
+import com.lpi.fdt.sheets.SpreadsheetCoordinates
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 
 
-fun main() {
+fun main(): Unit = runBlocking {
 
-    val startDate = LocalDate.of(2022, 9, 1)
-    val endDate = LocalDate.of(2022, 10, 10)
+    val dataUploadService = DefaultDataUploadService(
+        currencyClient = NBPClient(),
+        stocksFacade = StocksFacade(StooqClient())
+    )
 
-    runBlocking {
-        writeCurrencyRates("EUR", startDate, endDate)
-        writeCurrencyRates("USD", startDate, endDate)
+    // read data from config
+    val config = Config()
+    val usd = "USD"
+    val usdCoordinates = SpreadsheetCoordinates(config.currenciesSpreadsheetId, "${usd}toPLN")
+    val eur = "EUR"
+    val eurCoordinates = SpreadsheetCoordinates(config.currenciesSpreadsheetId, "${eur}toPLN")
+    val stockCoordinates =
+        SpreadsheetCoordinates(config.stocksSpreadsheetId, config.stockSpreadsheetData.spreadsheetRange)
+
+    launch {
+        dataUploadService.updateCurrencyRates(usd, usdCoordinates)
+        dataUploadService.updateCurrencyRates(eur, eurCoordinates)
+        dataUploadService.updateStockQuotations(config.stockSpreadsheetData.symbol, stockCoordinates)
     }
 
 }
