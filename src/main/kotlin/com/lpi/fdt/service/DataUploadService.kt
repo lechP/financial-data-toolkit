@@ -24,6 +24,7 @@ class DefaultDataUploadService(
 ) : DataUploadService {
     override suspend fun updateCurrencyRates(currencySymbol: String, spreadsheetCoordinates: SpreadsheetCoordinates) {
         val lastDate = getLastDate(spreadsheetCoordinates)
+        println("Update $currencySymbol from $lastDate")
         // TODO check if range is > 0 | test "should not call if range is empty
         val currencyRates = currencyClient.getCurrencyExchangeRates(currencySymbol, lastDate.plusDays(1), LocalDate.now())
         val currencyInput = currencyRates.rates.map { listOf(it.effectiveDate.toString(), it.mid)}
@@ -33,6 +34,7 @@ class DefaultDataUploadService(
 
     override suspend fun updateStockQuotations(stockSymbol: String, spreadsheetCoordinates: SpreadsheetCoordinates) {
         val lastDate = getLastDate(spreadsheetCoordinates)
+        println("Update $stockSymbol from $lastDate")
         // TODO ignore when lastDate==today
         val results = stocksFacade.getHistoricalValues(stockSymbol).filter { it.date > lastDate }
         val stocksInput = results.map { listOf(it.date.toString(), it.close)}

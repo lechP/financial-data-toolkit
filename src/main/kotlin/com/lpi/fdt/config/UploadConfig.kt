@@ -8,8 +8,7 @@ import java.io.FileInputStream
 
 class UploadConfig {
 
-    val properties: UploadProperties by lazy {
-        FileInputStream("dataupload.yaml")
+    private val properties: UploadProperties by lazy {
         val mapper = ObjectMapper(YAMLFactory())
         mapper.registerModule(KotlinModule.Builder().build())
         try {
@@ -24,6 +23,13 @@ class UploadConfig {
         }
     }
 
+    val currencies: List<CommodityUploadConfig> by lazy {
+        properties.currencies
+    }
+
+    val stocks: List<CommodityUploadConfig> by lazy {
+        properties.stocks
+    }
 }
 
 data class UploadProperties(
@@ -40,12 +46,3 @@ data class UploadCoordinates(
     val spreadsheetId: String,
     val range: String,
 )
-
-// TODO
-//  1. remove main
-//  2. prepare separate gtters for currencies and stocks in UploadConfig
-//  3. use new config in Main
-//  4. remove those props from old Config and maybe rename it?
-fun main() {
-    println(UploadConfig().properties)
-}
