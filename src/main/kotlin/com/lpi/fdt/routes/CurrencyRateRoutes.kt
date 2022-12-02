@@ -30,12 +30,10 @@ fun Route.currencyRateRouting() {
 
             when (call.request.headers[HttpHeaders.Accept]) {
                 ContentType.Application.Json.toString() -> {
-                    println("I'm in application/json")
                     call.respond(jsonResponse(currencyRates))
                 }
 
                 ContentType.Text.CSV.toString() -> {
-                    println("I'm in csv")
                     val filename = csvResponse(currencyRates)
                     val file = File(filename)
                     call.response.header(

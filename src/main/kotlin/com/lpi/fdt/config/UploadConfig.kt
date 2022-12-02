@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.FileInputStream
 
 class UploadConfig {
+
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val properties: UploadProperties by lazy {
         val mapper = ObjectMapper(YAMLFactory())
@@ -16,9 +20,7 @@ class UploadConfig {
                 mapper.readValue(it, UploadProperties::class.java)
             }
         } catch (exception: MissingKotlinParameterException) {
-            // TODO logger
-            println("Could not read YAML file!")
-            println(exception.message)
+            logger.error("Could not read YAML file!", exception)
             throw RuntimeException(exception)
         }
     }

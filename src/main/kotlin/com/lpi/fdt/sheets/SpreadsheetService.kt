@@ -12,6 +12,8 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.lpi.fdt.config.CredentialsConfig
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 
 private const val tokensDirectoryPath = "tokens"
@@ -19,6 +21,8 @@ private const val tokensDirectoryPath = "tokens"
 private const val applicationName = "Financial Data Toolkit"
 
 object SpreadsheetService {
+
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     private val credentialsConfig = CredentialsConfig()
 
@@ -64,8 +68,7 @@ object SpreadsheetService {
         val result = instance().spreadsheets().values().append(coordinates.spreadsheetId, coordinates.range, body)
             .setValueInputOption("USER_ENTERED")
             .execute()
-        // TODO logger
-        println("${result.updates.updatedRows} rows updated")
+        logger.info("${result.updates.updatedRows} rows updated")
     }
 
 }

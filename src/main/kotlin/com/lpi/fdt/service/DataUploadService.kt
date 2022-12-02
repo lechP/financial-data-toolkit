@@ -4,6 +4,8 @@ import com.lpi.fdt.quotations.currencies.NBPClient
 import com.lpi.fdt.quotations.stocks.StocksFacade
 import com.lpi.fdt.sheets.SpreadsheetCoordinates
 import com.lpi.fdt.sheets.SpreadsheetService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 interface DataUploadService {
@@ -22,9 +24,12 @@ class DefaultDataUploadService(
     private val currencyClient: NBPClient,
     private val stocksFacade: StocksFacade,
 ) : DataUploadService {
+
+    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+
     override suspend fun updateCurrencyRates(currencySymbol: String, spreadsheetCoordinates: SpreadsheetCoordinates) {
         val lastDate = getLastDate(spreadsheetCoordinates)
-        println("Update $currencySymbol from $lastDate")
+        logger.info("Update $currencySymbol from $lastDate")
         // TODO check if range is > 0 | test "should not call if range is empty
         val currencyRates = currencyClient.getCurrencyExchangeRates(currencySymbol, lastDate.plusDays(1), LocalDate.now())
         val currencyInput = currencyRates.rates.map { listOf(it.effectiveDate.toString(), it.mid)}
@@ -34,7 +39,7 @@ class DefaultDataUploadService(
 
     override suspend fun updateStockQuotations(stockSymbol: String, spreadsheetCoordinates: SpreadsheetCoordinates) {
         val lastDate = getLastDate(spreadsheetCoordinates)
-        println("Update $stockSymbol from $lastDate")
+        logger.info("Update $stockSymbol from $lastDate")
         // TODO ignore when lastDate==today
         val results = stocksFacade.getHistoricalValues(stockSymbol).filter { it.date > lastDate }
         val stocksInput = results.map { listOf(it.date.toString(), it.close)}
