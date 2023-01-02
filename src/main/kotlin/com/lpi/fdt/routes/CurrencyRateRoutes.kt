@@ -26,7 +26,7 @@ fun Route.currencyRateRouting() {
             val rawDateTo = call.request.queryParameters["dateTo"]
             val dateTo = LocalDate.parse(rawDateTo)
 
-            val currencyRates = NBPClient().getCurrencyExchangeRates(symbol, dateFrom, dateTo)
+            val currencyRates = NBPClient().getCurrencyExchangeRates(symbol, dateFrom, dateTo).first() // temp fix
 
             when (call.request.headers[HttpHeaders.Accept]) {
                 ContentType.Application.Json.toString() -> {
