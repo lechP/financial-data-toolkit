@@ -1,10 +1,12 @@
 package com.lpi.fdt.sheets
 
 import com.google.api.client.auth.oauth2.Credential
+import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
@@ -60,16 +62,27 @@ object SpreadsheetService {
             .build()
     }
 
-    fun getRangeValues(coordinates: SpreadsheetCoordinates): List<List<Any>> =
-        instance().spreadsheets().values()[coordinates.spreadsheetId, coordinates.range].execute().getValues()
+    fun getRangeValues(coordinates: SpreadsheetCoordinates): List<List<Any>> {
+        val googleRequest = instance().spreadsheets().values()[coordinates.spreadsheetId, coordinates.range]
+        return getGoogleResponse(googleRequest).getValues()
+    }
 
     fun appendValues(coordinates: SpreadsheetCoordinates, values: List<List<Any>>) {
         val body: ValueRange = ValueRange().setValues(values)
-        val result = instance().spreadsheets().values().append(coordinates.spreadsheetId, coordinates.range, body)
-            .setValueInputOption("USER_ENTERED")
-            .execute()
-        logger.info("${result.updates.updatedRows} rows updated")
+        val googleRequest =
+            instance().spreadsheets().values().append(coordinates.spreadsheetId, coordinates.range, body)
+                .setValueInputOption("USER_ENTERED")
+        val googleResponse = getGoogleResponse(googleRequest)
+        logger.info("${googleResponse.updates.updatedRows} rows updated")
     }
+
+    private fun <T> getGoogleResponse(googleRequest: AbstractGoogleClientRequest<T>): T =
+        try {
+            googleRequest.execute()
+        } catch (e: TokenResponseException) {
+            File(tokensDirectoryPath).deleteRecursively()
+            googleRequest.execute()
+        }
 
 }
 
