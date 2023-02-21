@@ -45,6 +45,8 @@ class NBPClient {
         }.body()
     }
 
+    // TODO handle 404 when asking for /today/today when data is not yet published
+
 }
 
 @Serializable

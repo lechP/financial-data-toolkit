@@ -6,7 +6,6 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
@@ -62,27 +61,35 @@ object SpreadsheetService {
             .build()
     }
 
-    fun getRangeValues(coordinates: SpreadsheetCoordinates): List<List<Any>> {
-        val googleRequest = instance().spreadsheets().values()[coordinates.spreadsheetId, coordinates.range]
-        return getGoogleResponse(googleRequest).getValues()
-    }
+    fun getRangeValues(coordinates: SpreadsheetCoordinates): List<List<Any>> =
+        try {
+            getReadRequest(coordinates).execute()
+        } catch (e: TokenResponseException) {
+            File(tokensDirectoryPath).deleteRecursively()
+            getReadRequest(coordinates).execute()
+        }.getValues()
+
+
+    private fun getReadRequest(coordinates: SpreadsheetCoordinates): Sheets.Spreadsheets.Values.Get =
+        instance().spreadsheets().values()[coordinates.spreadsheetId, coordinates.range]
 
     fun appendValues(coordinates: SpreadsheetCoordinates, values: List<List<Any>>) {
         val body: ValueRange = ValueRange().setValues(values)
-        val googleRequest =
-            instance().spreadsheets().values().append(coordinates.spreadsheetId, coordinates.range, body)
-                .setValueInputOption("USER_ENTERED")
-        val googleResponse = getGoogleResponse(googleRequest)
+        val googleResponse = try {
+            getAppendRequest(coordinates, body).execute()
+        } catch (e: TokenResponseException) {
+            File(tokensDirectoryPath).deleteRecursively()
+            getAppendRequest(coordinates, body).execute()
+        }
         logger.info("${googleResponse.updates.updatedRows} rows updated")
     }
 
-    private fun <T> getGoogleResponse(googleRequest: AbstractGoogleClientRequest<T>): T =
-        try {
-            googleRequest.execute()
-        } catch (e: TokenResponseException) {
-            File(tokensDirectoryPath).deleteRecursively()
-            googleRequest.execute()
-        }
+    private fun getAppendRequest(
+        coordinates: SpreadsheetCoordinates,
+        body: ValueRange
+    ): Sheets.Spreadsheets.Values.Append =
+        instance().spreadsheets().values().append(coordinates.spreadsheetId, coordinates.range, body)
+            .setValueInputOption("USER_ENTERED")
 
 }
 
