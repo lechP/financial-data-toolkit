@@ -18,3 +18,7 @@
 
 application.properties
 dataupload.yaml
+
+/input
+/output
+/tokens
