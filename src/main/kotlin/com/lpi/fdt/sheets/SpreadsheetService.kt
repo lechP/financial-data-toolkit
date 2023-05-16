@@ -74,14 +74,18 @@ object SpreadsheetService {
         instance().spreadsheets().values()[coordinates.spreadsheetId, coordinates.range]
 
     fun appendValues(coordinates: SpreadsheetCoordinates, values: List<List<Any>>) {
-        val body: ValueRange = ValueRange().setValues(values)
-        val googleResponse = try {
-            getAppendRequest(coordinates, body).execute()
-        } catch (e: TokenResponseException) {
-            File(tokensDirectoryPath).deleteRecursively()
-            getAppendRequest(coordinates, body).execute()
+        if(values.isNotEmpty()) {
+            val body: ValueRange = ValueRange().setValues(values)
+            val googleResponse = try {
+                getAppendRequest(coordinates, body).execute()
+            } catch (e: TokenResponseException) {
+                File(tokensDirectoryPath).deleteRecursively()
+                getAppendRequest(coordinates, body).execute()
+            }
+            logger.info("${googleResponse.updates.updatedRows} rows updated")
+        } else {
+            logger.info("No values to append. Update request ignored.")
         }
-        logger.info("${googleResponse.updates.updatedRows} rows updated")
     }
 
     private fun getAppendRequest(
