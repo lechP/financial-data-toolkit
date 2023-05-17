@@ -29,7 +29,7 @@ class NBPClient {
         symbol: String,
         dateFrom: LocalDate,
         dateTo: LocalDate
-    ): List<NBPCurrencyRatesResponse> =
+    ): List<CurrencyRates> =
         chunkedDateRange(dateFrom, dateTo, dateRangeLimit).map { (from, to) ->
             currencyRatesRequest(symbol, from, to)
         }
@@ -38,15 +38,18 @@ class NBPClient {
         symbol: String,
         from: LocalDate,
         to: LocalDate
-    ): NBPCurrencyRatesResponse {
+    ): CurrencyRates {
         logger.info("Calling NBP Client for exchange rates for $symbol in range [$from,$to].")
-        return ktorClient.get("$baseUrl/$symbol/$from/$to") {
+        val response = ktorClient.get("$baseUrl/$symbol/$from/$to") {
             accept(ContentType.Application.Json)
-        }.body()
+        }
+        return if (response.status.value == HttpStatusCode.NotFound.value) {
+            logger.warn("Client responded with NOT FOUND for given date range. Returning empty response.")
+            CurrencyRates.empty(symbol)
+        } else {
+            response.body<NBPCurrencyRatesResponse>().toCurrencyRates()
+        }
     }
-
-    // TODO handle 404 when asking for /today/today when data is not yet published
-
 }
 
 @Serializable
@@ -55,7 +58,11 @@ data class NBPCurrencyRatesResponse(
     val currency: String,
     val code: String,
     val rates: List<NBPCurrencyRate>
-)
+) {
+    fun toCurrencyRates() = CurrencyRates(
+        currencyCode = code,
+        rates = rates.map { it.toCurrencyRateValue() })
+}
 
 @Serializable
 data class NBPCurrencyRate(
@@ -64,4 +71,23 @@ data class NBPCurrencyRate(
     val effectiveDate: LocalDate,
     @Serializable(with = BigDecimalSerializer::class)
     val mid: BigDecimal
+) {
+    fun toCurrencyRateValue() = CurrencyRateValue(
+        date = effectiveDate,
+        value = mid
+    )
+}
+
+data class CurrencyRates(
+    val currencyCode: String,
+    val rates: List<CurrencyRateValue>
+) {
+    companion object {
+        fun empty(currencyCode: String) = CurrencyRates(currencyCode, emptyList())
+    }
+}
+
+data class CurrencyRateValue(
+    val date: LocalDate,
+    val value: BigDecimal,
 )

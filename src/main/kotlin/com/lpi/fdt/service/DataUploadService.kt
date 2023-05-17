@@ -36,7 +36,7 @@ class DefaultDataUploadService(
         if(dateFrom <= dateTo) {
             val currencyRates =
                 currencyClient.getCurrencyExchangeRates(currencySymbol, lastDate.plusDays(1), LocalDate.now())
-            val currencyInput = currencyRates.flatMap { it.rates }.map { listOf(it.effectiveDate.toString(), it.mid) }
+            val currencyInput = currencyRates.flatMap { it.rates }.map { listOf(it.date.toString(), it.value) }
             // write values
             SpreadsheetService.appendValues(spreadsheetCoordinates, currencyInput)
         } else {

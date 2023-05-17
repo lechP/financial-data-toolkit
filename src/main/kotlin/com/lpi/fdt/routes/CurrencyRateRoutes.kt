@@ -1,10 +1,10 @@
 package com.lpi.fdt.routes
 
 import com.lpi.fdt.quotations.currencies.NBPClient
-import com.lpi.fdt.quotations.currencies.NBPCurrencyRatesResponse
 import com.lpi.fdt.export.CsvCurrencyWriter
 import com.lpi.fdt.export.CsvExchangeRateRecord
 import com.lpi.fdt.export.CsvExportInput
+import com.lpi.fdt.quotations.currencies.CurrencyRates
 import com.lpi.fdt.serialization.BigDecimalSerializer
 import com.lpi.fdt.serialization.LocalDateSerializer
 import io.ktor.http.*
@@ -54,19 +54,19 @@ fun Route.currencyRateRouting() {
     }
 }
 
-private fun csvResponse(currencyRates: NBPCurrencyRatesResponse): String = CsvCurrencyWriter.writeToFile(
+private fun csvResponse(currencyRates: CurrencyRates): String = CsvCurrencyWriter.writeToFile(
     CsvExportInput(
-        currencyCode = currencyRates.code,
-        exchangeRates = currencyRates.rates.map { CsvExchangeRateRecord(it.effectiveDate, it.mid) }
+        currencyCode = currencyRates.currencyCode,
+        exchangeRates = currencyRates.rates.map { CsvExchangeRateRecord(it.date, it.value) }
     )
 )
 
-private fun jsonResponse(currencyRates: NBPCurrencyRatesResponse) = CurrencyRatesResponse(
-    currencyCode = currencyRates.code,
+private fun jsonResponse(currencyRates: CurrencyRates) = CurrencyRatesResponse(
+    currencyCode = currencyRates.currencyCode,
     exchangeRates = currencyRates.rates.map {
         CurrencyRate(
-            effectiveDate = it.effectiveDate,
-            exchangeRate = it.mid
+            effectiveDate = it.date,
+            exchangeRate = it.value
         )
     })
 
