@@ -5,14 +5,14 @@ import java.math.BigDecimal
 
 fun main() {
     // filter
-    val month = 4
+    val month = 6
     val day = 1
 
 
     // parse HTML file for Millennium
-    val htmlM = FileInputStream("input/transactionHistory.html").readBytes().decodeToString()
-    val transactionsM: List<BudgetTransaction> = MHtmlTransactionParser().parseTransactions(htmlM)
-    filterAndPrintTransactions(month,day,transactionsM)
+//    val htmlM = FileInputStream("input/transactionHistory.html").readBytes().decodeToString()
+//    val transactionsM: List<BudgetTransaction> = MHtmlTransactionParser().parseTransactions(htmlM)
+//    filterAndPrintTransactions(month,day,transactionsM)
 
     println()
     println("--------------------------------------------")
@@ -21,12 +21,22 @@ fun main() {
     // parse HTML file for Citi
     val htmlC = FileInputStream("input/citi.html").readBytes().decodeToString()
     val transactionsC: List<BudgetTransaction> = CitiHtmlTransactionParser().parseTransactions(htmlC)
-    filterAndPrintTransactions(month,day,transactionsC)
+    filterAndPrintTransactions(month, day, transactionsC)
+
+    println()
+    println("--------------------------------------------")
+    println()
+
+    // parse HTML file for PKO credit card
+    val htmlP = FileInputStream("input/history_pko.html").readBytes().decodeToString()
+    val transactionsP: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser().parseTransactions(htmlP)
+    filterAndPrintTransactions(month, day, transactionsP)
 }
 
 fun filterAndPrintTransactions(month: Int, day: Int, transactions: List<BudgetTransaction>) {
     val filteredTransactions =
-        transactions.filter { it.date.monthValue >= month && it.date.dayOfMonth >= day }.filter { it.amount != BigDecimal.ZERO }
+        transactions.filter { it.date.monthValue >= month && it.date.dayOfMonth >= day }
+            .filter { it.amount != BigDecimal.ZERO }
 
     // print in csv like format
     filteredTransactions.forEach {
@@ -48,6 +58,9 @@ fun String.deriveShop() = split("; ").first().let {
         it.startsWith("KAUFLAND") -> "Kaufland"
         it.startsWith("STOKROTKA") -> "Stokrotka"
         it.startsWith("SKLEP POD DEBEM") -> "Pod Dębem"
+        it.startsWith("ROSSMANN") -> "Rossmann"
+        it.startsWith("PIEKARNIA HERT") -> "Hert"
+        it.startsWith("PEPCO") -> "Pepco"
         else -> it
     }
 }
