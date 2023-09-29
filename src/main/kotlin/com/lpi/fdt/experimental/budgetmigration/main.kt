@@ -2,6 +2,7 @@ package com.lpi.fdt.experimental.budgetmigration
 
 import com.lpi.fdt.sheets.SpreadsheetCoordinates
 import com.lpi.fdt.sheets.SpreadsheetService
+import java.math.BigDecimal
 import java.time.LocalDate
 
 
@@ -33,9 +34,3 @@ fun main() {
     println("incomes")
     println(incomes.drop(2))
 }
-
-data class SpreadsheetExpenseV1(
-    val date: LocalDate,
-    val description: String,
-
-    )
