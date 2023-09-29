@@ -18,6 +18,7 @@
 
 application.properties
 dataupload.yaml
+dataimport.yaml
 
 /input
 /output

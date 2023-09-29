@@ -1,28 +1,16 @@
 package com.lpi.fdt.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.FileInputStream
 
 class UploadConfig {
 
-    private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-
     private val properties: UploadProperties by lazy {
-        val mapper = ObjectMapper(YAMLFactory())
-        mapper.registerModule(KotlinModule.Builder().build())
-        try {
-            FileInputStream("dataupload.yaml").use {
-                mapper.readValue(it, UploadProperties::class.java)
-            }
-        } catch (exception: MissingKotlinParameterException) {
-            logger.error("Could not read YAML file!", exception)
-            throw RuntimeException(exception)
-        }
+        loadProperties("dataupload.yaml")
     }
 
     val currencies: List<CommodityUploadConfig> by lazy {
@@ -48,3 +36,17 @@ data class UploadCoordinates(
     val spreadsheetId: String,
     val range: String,
 )
+
+inline fun <reified T> loadProperties(filename: String): T {
+    val mapper = ObjectMapper(YAMLFactory())
+    mapper.registerModule(KotlinModule.Builder().build())
+    try {
+        return FileInputStream(filename).use {
+            mapper.readValue(it, T::class.java)
+        }
+    } catch (exception: MismatchedInputException) {
+        val logger = LoggerFactory.getLogger("Properties loader")
+        logger.error("Could not read YAML file!", exception)
+        throw RuntimeException(exception)
+    }
+}
