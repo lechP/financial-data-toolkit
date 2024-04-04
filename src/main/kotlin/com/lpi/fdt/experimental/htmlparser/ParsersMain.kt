@@ -4,11 +4,14 @@ import java.io.File
 import java.io.FileInputStream
 import java.math.BigDecimal
 
-fun main() {
+fun main(args: Array<String>) {
+
+    val month = if(args.isNotEmpty()) args[0].toInt() else 0
+    val day = if(args.size > 1) args[1].toInt() else 0
 
     //print all files names within input directory
     val files = File("input").listFiles()
-    println("Found following files tp parse:")
+    println("Found following files to parse:")
     files?.forEach {
         println(it.name)
     }
@@ -27,17 +30,17 @@ fun main() {
             pkoFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as PKO file\n\n")
                 val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser().parseTransactions(content)
-                filterAndPrintTransactions(3, 1, transactions)
+                filterAndPrintTransactions(month, day, transactions)
             }
             milleFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Millennium file\n\n")
                 val transactions: List<BudgetTransaction> = MHtmlTransactionParser().parseTransactions(content)
-                filterAndPrintTransactions(3, 1, transactions)
+                filterAndPrintTransactions(month, day, transactions)
             }
             citiFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Citi file\n\n")
                 val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser().parseTransactions(content)
-                filterAndPrintTransactions(3, 1, transactions)
+                filterAndPrintTransactions(month, day, transactions)
             }
             else -> println("Unknown file type: ${file.name}")
         }
