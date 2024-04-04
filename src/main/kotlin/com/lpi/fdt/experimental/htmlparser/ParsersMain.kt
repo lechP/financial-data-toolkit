@@ -1,36 +1,55 @@
 package com.lpi.fdt.experimental.htmlparser
 
+import java.io.File
 import java.io.FileInputStream
 import java.math.BigDecimal
 
 fun main() {
-    // filter
-    val month = 6
-    val day = 1
 
+    //print all files names within input directory
+    val files = File("input").listFiles()
+    println("Found following files tp parse:")
+    files?.forEach {
+        println(it.name)
+    }
+    printltab()
 
-    // parse HTML file for Millennium
-//    val htmlM = FileInputStream("input/transactionHistory.html").readBytes().decodeToString()
-//    val transactionsM: List<BudgetTransaction> = MHtmlTransactionParser().parseTransactions(htmlM)
-//    filterAndPrintTransactions(month,day,transactionsM)
+    // define "fingerprint" for each file and parse it depending on the fingerprint
+    // TODO use strategy
 
+    val pkoFingerprint = listOf("PKOInteligo", "<h3>Operacje zrealizowane</h3>", "<tr><td>Numer karty</td>")
+    val milleFingerprint = listOf("<table border=\"1\">", "<td align=\"right\">Numer rachunku/karty</td>", "</table><br></body>")
+    val citiFingerprint = listOf("tbd")
+
+    files?.forEach { file ->
+        val content = file.readText()
+        when {
+            pkoFingerprint.all { content.contains(it) } -> {
+                println("Parsing [${file.name}] as PKO file\n\n")
+                val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser().parseTransactions(content)
+                filterAndPrintTransactions(3, 1, transactions)
+            }
+            milleFingerprint.all { content.contains(it) } -> {
+                println("Parsing [${file.name}] as Millennium file\n\n")
+                val transactions: List<BudgetTransaction> = MHtmlTransactionParser().parseTransactions(content)
+                filterAndPrintTransactions(3, 1, transactions)
+            }
+            citiFingerprint.all { content.contains(it) } -> {
+                println("Parsing [${file.name}] as Citi file\n\n")
+                val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser().parseTransactions(content)
+                filterAndPrintTransactions(3, 1, transactions)
+            }
+            else -> println("Unknown file type: ${file.name}")
+        }
+        printltab()
+    }
+
+}
+
+private fun printltab() {
     println()
     println("--------------------------------------------")
     println()
-
-    // parse HTML file for Citi
-    val htmlC = FileInputStream("input/citi.html").readBytes().decodeToString()
-    val transactionsC: List<BudgetTransaction> = CitiHtmlTransactionParser().parseTransactions(htmlC)
-    filterAndPrintTransactions(month, day, transactionsC)
-
-    println()
-    println("--------------------------------------------")
-    println()
-
-    // parse HTML file for PKO credit card
-    val htmlP = FileInputStream("input/history_pko.html").readBytes().decodeToString()
-    val transactionsP: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser().parseTransactions(htmlP)
-    filterAndPrintTransactions(month, day, transactionsP)
 }
 
 fun filterAndPrintTransactions(month: Int, day: Int, transactions: List<BudgetTransaction>) {
