@@ -29,17 +29,17 @@ fun main(args: Array<String>) {
         when {
             pkoFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as PKO file\n\n")
-                val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser().parseTransactions(content)
+                val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser(content).parseTransactions(content)
                 filterAndPrintTransactions(month, day, transactions)
             }
             milleFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Millennium file\n\n")
-                val transactions: List<BudgetTransaction> = MHtmlTransactionParser().parseTransactions(content)
+                val transactions: List<BudgetTransaction> = MHtmlTransactionParser(content).parseTransactions(content)
                 filterAndPrintTransactions(month, day, transactions)
             }
             citiFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Citi file\n\n")
-                val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser().parseTransactions(content)
+                val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser(content).parseTransactions(content)
                 filterAndPrintTransactions(month, day, transactions)
             }
             else -> println("Unknown file type: ${file.name}")

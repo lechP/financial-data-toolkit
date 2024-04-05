@@ -5,7 +5,7 @@ import org.jsoup.nodes.Element
 import java.io.File
 import java.time.LocalDate
 
-class PKOCreditCardHtmlTransactionParser : HtmlTransactionParser {
+class PKOCreditCardHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
 
     override fun parseTransactions(html: String): List<BudgetTransaction> =
         html.extractTransactionsTable().getTransactionRecords().map { it.parseBudgetTransaction() }.reversed()
@@ -33,16 +33,5 @@ class PKOCreditCardHtmlTransactionParser : HtmlTransactionParser {
     }
 
     private fun Element.col(index: Int): String = select("td")[index].text()
-}
-
-fun main() {
-    // filter
-    val month = 6
-    val day = 8
-
-    val input = File("input/history_pko.html").readLines()
-
-    val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser().parseTransactions(input.joinToString("\n"))
-    filterAndPrintTransactions(month, day, transactions)
 }
 

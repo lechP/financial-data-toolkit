@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class CitiHtmlTransactionParser : HtmlTransactionParser {
+class CitiHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
     override fun parseTransactions(html: String): List<BudgetTransaction> =
         getTransactionElements(html)
             .mapNotNull { it.parseSingleTransaction() }

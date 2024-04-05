@@ -13,6 +13,7 @@ data class BudgetTransaction(
 
 interface HtmlTransactionParser {
 
+    val content: String
     fun parseTransactions(html: String): List<BudgetTransaction>
 
 }

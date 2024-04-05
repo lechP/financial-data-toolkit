@@ -5,7 +5,7 @@ import org.jsoup.nodes.Element
 import java.math.BigDecimal
 import java.time.LocalDate
 
-class MHtmlTransactionParser : HtmlTransactionParser {
+class MHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
 
     override fun parseTransactions(html: String): List<BudgetTransaction> =
         getTransactionsTable(html).map { it.parseBudgetTransaction() }
