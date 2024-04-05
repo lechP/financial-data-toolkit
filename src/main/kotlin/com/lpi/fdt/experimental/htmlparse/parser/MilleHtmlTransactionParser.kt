@@ -10,6 +10,8 @@ class MilleHtmlTransactionParser(override val content: String) : HtmlTransaction
     override fun getTransactions(): List<BudgetTransaction> =
         getTransactionsTable(content).map { it.parseBudgetTransaction() }
 
+    override fun name() = "Millenium Bank"
+
     private fun getTransactionsTable(html: String) =
         Jsoup.parse(html).select("table").first()!!.select("tbody").select("tr")
 

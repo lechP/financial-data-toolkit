@@ -16,4 +16,6 @@ interface HtmlTransactionParser {
     val content: String
     fun getTransactions(): List<BudgetTransaction>
 
+    fun name(): String
+
 }

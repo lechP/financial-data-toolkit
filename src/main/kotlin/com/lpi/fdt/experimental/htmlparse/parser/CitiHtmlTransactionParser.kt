@@ -13,6 +13,8 @@ class CitiHtmlTransactionParser(override val content: String) : HtmlTransactionP
             .mapNotNull { it.parseSingleTransaction() }
             .sortedBy { it.date }
 
+    override fun name() = "CitiBank"
+
     private fun getTransactionElements(html: String) =
         Jsoup.parse(html).select("div[data-index]")
 

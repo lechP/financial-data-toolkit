@@ -9,6 +9,7 @@ class PKOCreditCardHtmlTransactionParser(override val content: String) : HtmlTra
     override fun getTransactions(): List<BudgetTransaction> =
         content.extractTransactionsTable().getTransactionRecords().map { it.parseBudgetTransaction() }.reversed()
 
+    override fun name() = "PKO Credit Card"
     private fun String.extractTransactionsTable(): String {
         val lines = split("\n")
         val tableStartingIndex = lines.indexOfLast { it.contains("<table>") }

@@ -1,7 +1,5 @@
-package com.lpi.fdt.experimental.htmlparse
+package com.lpi.fdt.experimental.htmlparse.parser
 
-import com.lpi.fdt.experimental.htmlparse.parser.BudgetTransaction
-import com.lpi.fdt.experimental.htmlparse.parser.MilleHtmlTransactionParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
