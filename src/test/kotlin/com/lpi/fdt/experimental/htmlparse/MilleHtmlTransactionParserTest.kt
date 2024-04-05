@@ -1,11 +1,13 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse
 
+import com.lpi.fdt.experimental.htmlparse.parser.BudgetTransaction
+import com.lpi.fdt.experimental.htmlparse.parser.MilleHtmlTransactionParser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 
-class MHtmlTransactionParserTest {
+class MilleHtmlTransactionParserTest {
 
     @Test
     fun `should parse single charge transaction`() {
@@ -27,7 +29,7 @@ class MHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = MHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -58,7 +60,7 @@ class MHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = MHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -99,7 +101,7 @@ class MHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = MHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction1 = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -118,7 +120,7 @@ class MHtmlTransactionParserTest {
     fun `should return empty list when no transactions`() {
         val html = "<table><tbody></tbody></table>"
 
-        val transactions = MHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleHtmlTransactionParser(html).getTransactions()
 
         assertEquals(emptyList<BudgetTransaction>(), transactions)
     }

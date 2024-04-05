@@ -1,8 +1,7 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse.parser
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-import java.io.File
 import java.time.LocalDate
 
 class PKOCreditCardHtmlTransactionParser(override val content: String) : HtmlTransactionParser {

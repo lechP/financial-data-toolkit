@@ -1,4 +1,4 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse
 
 const val PKO = "PKO"
 const val MILLE = "MILLE"

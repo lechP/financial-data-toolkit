@@ -1,5 +1,9 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse
 
+import com.lpi.fdt.experimental.htmlparse.parser.BudgetTransaction
+import com.lpi.fdt.experimental.htmlparse.parser.CitiHtmlTransactionParser
+import com.lpi.fdt.experimental.htmlparse.parser.MilleHtmlTransactionParser
+import com.lpi.fdt.experimental.htmlparse.parser.PKOCreditCardHtmlTransactionParser
 import java.io.File
 import java.math.BigDecimal
 
@@ -33,7 +37,7 @@ fun main(args: Array<String>) {
             }
             milleFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Millennium file\n\n")
-                val transactions: List<BudgetTransaction> = MHtmlTransactionParser(content).getTransactions()
+                val transactions: List<BudgetTransaction> = MilleHtmlTransactionParser(content).getTransactions()
                 filterAndPrintTransactions(month, day, transactions)
             }
             citiFingerprint.all { content.contains(it) } -> {

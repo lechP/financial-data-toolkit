@@ -1,5 +1,7 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse
 
+import com.lpi.fdt.experimental.htmlparse.parser.BudgetTransaction
+import com.lpi.fdt.experimental.htmlparse.parser.CitiHtmlTransactionParser
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

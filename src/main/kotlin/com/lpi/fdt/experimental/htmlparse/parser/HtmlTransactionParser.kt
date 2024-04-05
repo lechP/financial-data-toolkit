@@ -1,4 +1,4 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse.parser
 
 import java.math.BigDecimal
 import java.time.LocalDate

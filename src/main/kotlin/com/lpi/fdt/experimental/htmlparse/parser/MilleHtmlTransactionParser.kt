@@ -1,11 +1,11 @@
-package com.lpi.fdt.experimental.htmlparser
+package com.lpi.fdt.experimental.htmlparse.parser
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.math.BigDecimal
 import java.time.LocalDate
 
-class MHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
+class MilleHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
 
     override fun getTransactions(): List<BudgetTransaction> =
         getTransactionsTable(content).map { it.parseBudgetTransaction() }
