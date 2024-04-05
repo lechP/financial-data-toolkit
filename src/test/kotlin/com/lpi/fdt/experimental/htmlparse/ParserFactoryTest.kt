@@ -3,7 +3,6 @@ package com.lpi.fdt.experimental.htmlparse
 import com.lpi.fdt.experimental.htmlparse.parser.MilleHtmlTransactionParser
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 
 class ParserFactoryTest {
 
@@ -18,9 +17,7 @@ class ParserFactoryTest {
     @Test
     fun `should throw exception when content is not matched with any parser`() {
         val content = "lorem ipsum"
-        assertThrows(IllegalArgumentException::class.java) {
-            ParserFactory().createParser(content)
-        }
+        ParserFactory().createParser(content) shouldBe null
     }
 }
 

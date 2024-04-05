@@ -1,16 +1,13 @@
 package com.lpi.fdt.experimental.htmlparse
 
 import com.lpi.fdt.experimental.htmlparse.parser.BudgetTransaction
-import com.lpi.fdt.experimental.htmlparse.parser.CitiHtmlTransactionParser
-import com.lpi.fdt.experimental.htmlparse.parser.MilleHtmlTransactionParser
-import com.lpi.fdt.experimental.htmlparse.parser.PKOCreditCardHtmlTransactionParser
 import java.io.File
 import java.math.BigDecimal
 
 fun main(args: Array<String>) {
 
-    val month = if(args.isNotEmpty()) args[0].toInt() else 0
-    val day = if(args.size > 1) args[1].toInt() else 0
+    val month = if (args.isNotEmpty()) args[0].toInt() else 0
+    val day = if (args.size > 1) args[1].toInt() else 0
 
     //print all files names within input directory
     val files = File("input").listFiles()
@@ -20,32 +17,14 @@ fun main(args: Array<String>) {
     }
     printltab()
 
-    // define "fingerprint" for each file and parse it depending on the fingerprint
-    // TODO use strategy
-
-    val pkoFingerprint = listOf("PKOInteligo", "<h3>Operacje zrealizowane</h3>", "<tr><td>Numer karty</td>")
-    val milleFingerprint = listOf("<table border=\"1\">", "<td align=\"right\">Numer rachunku/karty</td>", "</table><br></body>")
-    val citiFingerprint = listOf("tbd")
-
     files?.forEach { file ->
         val content = file.readText()
-        when {
-            pkoFingerprint.all { content.contains(it) } -> {
-                println("Parsing [${file.name}] as PKO file\n\n")
-                val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser(content).getTransactions()
-                filterAndPrintTransactions(month, day, transactions)
-            }
-            milleFingerprint.all { content.contains(it) } -> {
-                println("Parsing [${file.name}] as Millennium file\n\n")
-                val transactions: List<BudgetTransaction> = MilleHtmlTransactionParser(content).getTransactions()
-                filterAndPrintTransactions(month, day, transactions)
-            }
-            citiFingerprint.all { content.contains(it) } -> {
-                println("Parsing [${file.name}] as Citi file\n\n")
-                val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser(content).getTransactions()
-                filterAndPrintTransactions(month, day, transactions)
-            }
-            else -> println("Unknown file type: ${file.name}")
+        val parser = ParserFactory().createParser(content)
+        if (parser != null) {
+            println("Parsing [${file.name}] by ${parser.name()} parser...\n\n")
+            filterAndPrintTransactions(month, day, parser.getTransactions())
+        } else {
+            println("No parser found for [${file.name}]")
         }
         printltab()
     }
