@@ -7,8 +7,8 @@ import java.time.LocalDate
 
 class MHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
 
-    override fun parseTransactions(html: String): List<BudgetTransaction> =
-        getTransactionsTable(html).map { it.parseBudgetTransaction() }
+    override fun getTransactions(): List<BudgetTransaction> =
+        getTransactionsTable(content).map { it.parseBudgetTransaction() }
 
     private fun getTransactionsTable(html: String) =
         Jsoup.parse(html).select("table").first()!!.select("tbody").select("tr")

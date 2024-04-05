@@ -7,8 +7,8 @@ import java.time.LocalDate
 
 class PKOCreditCardHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
 
-    override fun parseTransactions(html: String): List<BudgetTransaction> =
-        html.extractTransactionsTable().getTransactionRecords().map { it.parseBudgetTransaction() }.reversed()
+    override fun getTransactions(): List<BudgetTransaction> =
+        content.extractTransactionsTable().getTransactionRecords().map { it.parseBudgetTransaction() }.reversed()
 
     private fun String.extractTransactionsTable(): String {
         val lines = split("\n")

@@ -8,8 +8,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CitiHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
-    override fun parseTransactions(html: String): List<BudgetTransaction> =
-        getTransactionElements(html)
+    override fun getTransactions(): List<BudgetTransaction> =
+        getTransactionElements(content)
             .mapNotNull { it.parseSingleTransaction() }
             .sortedBy { it.date }
 

@@ -7,7 +7,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 class CitiHtmlTransactionParserTest {
-    private val parser = CitiHtmlTransactionParser()
 
     @Test
     fun `should parse single transaction`() {
@@ -36,7 +35,7 @@ class CitiHtmlTransactionParserTest {
             </div>
         """.trimIndent()
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = CitiHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -69,7 +68,7 @@ class CitiHtmlTransactionParserTest {
             </div>
         """.trimIndent()
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = CitiHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction1 = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -89,7 +88,7 @@ class CitiHtmlTransactionParserTest {
     fun `should return empty list when no transactions`() {
         val html = "<div></div>"
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = CitiHtmlTransactionParser(html).getTransactions()
 
         assertEquals(emptyList<BudgetTransaction>(), transactions)
     }
@@ -108,7 +107,7 @@ class CitiHtmlTransactionParserTest {
             </div>
         """.trimIndent()
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = CitiHtmlTransactionParser(html).getTransactions()
 
         assertEquals(emptyList<BudgetTransaction>(), transactions)
     }

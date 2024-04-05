@@ -1,7 +1,6 @@
 package com.lpi.fdt.experimental.htmlparser
 
 import java.io.File
-import java.io.FileInputStream
 import java.math.BigDecimal
 
 fun main(args: Array<String>) {
@@ -29,17 +28,17 @@ fun main(args: Array<String>) {
         when {
             pkoFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as PKO file\n\n")
-                val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser(content).parseTransactions(content)
+                val transactions: List<BudgetTransaction> = PKOCreditCardHtmlTransactionParser(content).getTransactions()
                 filterAndPrintTransactions(month, day, transactions)
             }
             milleFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Millennium file\n\n")
-                val transactions: List<BudgetTransaction> = MHtmlTransactionParser(content).parseTransactions(content)
+                val transactions: List<BudgetTransaction> = MHtmlTransactionParser(content).getTransactions()
                 filterAndPrintTransactions(month, day, transactions)
             }
             citiFingerprint.all { content.contains(it) } -> {
                 println("Parsing [${file.name}] as Citi file\n\n")
-                val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser(content).parseTransactions(content)
+                val transactions: List<BudgetTransaction> = CitiHtmlTransactionParser(content).getTransactions()
                 filterAndPrintTransactions(month, day, transactions)
             }
             else -> println("Unknown file type: ${file.name}")

@@ -6,7 +6,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 class MHtmlTransactionParserTest {
-    private val parser = MHtmlTransactionParser()
 
     @Test
     fun `should parse single charge transaction`() {
@@ -28,7 +27,7 @@ class MHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = MHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -59,7 +58,7 @@ class MHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = MHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -100,7 +99,7 @@ class MHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = MHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction1 = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -119,7 +118,7 @@ class MHtmlTransactionParserTest {
     fun `should return empty list when no transactions`() {
         val html = "<table><tbody></tbody></table>"
 
-        val transactions = parser.parseTransactions(html)
+        val transactions = MHtmlTransactionParser(html).getTransactions()
 
         assertEquals(emptyList<BudgetTransaction>(), transactions)
     }
