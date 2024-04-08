@@ -5,7 +5,7 @@ import com.lpi.fdt.config.loadProperties
 class BudgetImportConfig {
 
     private val properties: ImportProperties by lazy {
-        loadProperties("dataimport.yaml")
+        loadProperties("config/dataimport.yaml")
     }
 
     val spreadsheetId: String by lazy {

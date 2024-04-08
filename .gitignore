@@ -17,9 +17,7 @@
 *.rar
 
 application.properties
-dataupload.yaml
-dataimport.yaml
-
+/config
 /input
 /output
 /tokens

@@ -10,7 +10,7 @@ import java.io.FileInputStream
 class UploadConfig {
 
     private val properties: UploadProperties by lazy {
-        loadProperties("dataupload.yaml")
+        loadProperties("config/dataupload.yaml")
     }
 
     val currencies: List<CommodityUploadConfig> by lazy {
