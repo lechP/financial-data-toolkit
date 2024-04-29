@@ -122,4 +122,71 @@ class MilleAccountHtmlTransactionParserTest {
 
         assertEquals(emptyList<BudgetTransaction>(), transactions)
     }
+
+    @Test
+    fun `should derive date from description`() {
+        val html = """
+            <table>
+                <tbody>
+                    <tr>
+                      <td align="right">PL79 1234</td>
+                      <td align="right">2024-04-27</td>
+                      <td align="right">2024-04-27</td>
+                      <td align="right">[category]</td>
+                      <td align="right"></td>
+                      <td align="left"></td>
+                      <td align="left">some shop in some place
+            place continuation
+            2024-04-25<br></td>
+                      <td align="right">-59.00</td>
+                      <td align="right">&nbsp;</td>
+                      <td align="right">12.09</td>
+                      <td align="right">PLN</td>
+                    </tr>                
+                </tbody>
+            </table>
+        """.trimIndent()
+
+        val transactions = MilleAccountHtmlTransactionParser(html).getTransactions()
+
+        val expectedTransaction = BudgetTransaction(
+            date = LocalDate.of(2024, 4, 25),
+            amount = BigDecimal("59.00"),
+            description = "some shop in some place place continuation 2024-04-25"
+        )
+        assertEquals(listOf(expectedTransaction), transactions)
+    }
+
+
+    @Test
+    fun `should use date from date column when not present in description`() {
+        val html = """
+            <table>
+                <tbody>
+                    <tr>
+                      <td align="right">PL79 1234</td>
+                      <td align="right">2024-04-25</td>
+                      <td align="right">2024-04-25</td>
+                      <td align="right">[category]</td>
+                      <td align="right">1234 1234</td>
+                      <td align="left">receiver</td>
+                      <td align="left">some description<br></td>
+                      <td align="right">-180.00</td>
+                      <td align="right">&nbsp;</td>
+                      <td align="right">11.83</td>
+                      <td align="right">PLN</td>
+                    </tr>                    
+                </tbody>
+            </table>
+        """.trimIndent()
+
+        val transactions = MilleAccountHtmlTransactionParser(html).getTransactions()
+
+        val expectedTransaction = BudgetTransaction(
+            date = LocalDate.of(2024, 4, 25),
+            amount = BigDecimal("180.00"),
+            description = "some description"
+        )
+        assertEquals(listOf(expectedTransaction), transactions)
+    }
 }

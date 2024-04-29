@@ -17,8 +17,12 @@ class MilleAccountHtmlTransactionParser(override val content: String) : HtmlTran
 
     private fun Element.parseBudgetTransaction(): BudgetTransaction {
         // read columns
-        val transactionDate = LocalDate.parse(col(2))
         val description = col(7)
+
+        // if descriptions ends with date in yyyy-mm-dd format then use it as transactionDate, otherwise use the one from column 2
+        val dateRegex = """\d{4}-\d{2}-\d{2}""".toRegex()
+        val date = dateRegex.find(description)?.value
+        val transactionDate = if (date != null) LocalDate.parse(date) else LocalDate.parse(col(2))
 
         val charge = col(8)
         val credit = col(9)
