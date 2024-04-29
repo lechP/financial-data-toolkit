@@ -5,12 +5,12 @@ import org.jsoup.nodes.Element
 import java.math.BigDecimal
 import java.time.LocalDate
 
-class MilleHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
+class MilleCreditCardHtmlTransactionParser(override val content: String) : HtmlTransactionParser {
 
     override fun getTransactions(): List<BudgetTransaction> =
         getTransactionsTable(content).map { it.parseBudgetTransaction() }
 
-    override fun name() = "Millenium Bank"
+    override fun name() = "Millenium Bank CreditCard"
 
     private fun getTransactionsTable(html: String) =
         Jsoup.parse(html).select("table").first()!!.select("tbody").select("tr")

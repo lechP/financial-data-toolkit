@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.LocalDate
 
-class MilleHtmlTransactionParserTest {
+class MilleAccountHtmlTransactionParserTest {
 
     @Test
     fun `should parse single charge transaction`() {
@@ -27,7 +27,7 @@ class MilleHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = MilleHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleAccountHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -58,7 +58,7 @@ class MilleHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = MilleHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleAccountHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -99,7 +99,7 @@ class MilleHtmlTransactionParserTest {
             </table>
         """.trimIndent()
 
-        val transactions = MilleHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleAccountHtmlTransactionParser(html).getTransactions()
 
         val expectedTransaction1 = BudgetTransaction(
             date = LocalDate.of(2023, 3, 25),
@@ -118,7 +118,7 @@ class MilleHtmlTransactionParserTest {
     fun `should return empty list when no transactions`() {
         val html = "<table><tbody></tbody></table>"
 
-        val transactions = MilleHtmlTransactionParser(html).getTransactions()
+        val transactions = MilleAccountHtmlTransactionParser(html).getTransactions()
 
         assertEquals(emptyList<BudgetTransaction>(), transactions)
     }
