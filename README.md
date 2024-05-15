@@ -1,5 +1,8 @@
 # financial-data-toolkit
-toolkit for gathering data from various financial APIs
+Toolkit which helps me maintain my personal finance (mainly in google spreadsheets). Main features:
+* gathering data from various financial APIs
+* parsing transaction data from bank statements
+* updating google spreadsheets with financial data
 
 ### Configuration
 
