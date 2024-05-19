@@ -16,3 +16,8 @@ Currently, the following config files are supported:
 * dataimport.yaml - to import data from google spreadsheet
 * dataexport.yaml - to export stocks/currencies quotation data to google spreadsheets
 * dictionaries.yaml - to map transaction data to defined list of names of shops 
+
+
+### Usage
+
+`./gradlew run` calls currencies and stocks APIs and updates configured spreadsheets
