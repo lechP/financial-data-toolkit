@@ -20,4 +20,6 @@ Currently, the following config files are supported:
 
 ### Usage
 
-`./gradlew run` calls currencies and stocks APIs and updates configured spreadsheets
+`./gradlew installDist` rebuilds local library
+
+`./refresh_data.sh` calls currencies and stocks APIs and updates configured spreadsheets using built library
