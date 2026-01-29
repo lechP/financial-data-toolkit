@@ -4,8 +4,8 @@ plugins {
     id 'application'
 }
 
-group 'com.lpi'
-version '1.0-SNAPSHOT'
+group = 'com.lpi'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -17,26 +17,18 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jackson_version"
 
-    implementation group: 'com.opencsv', name: 'opencsv', version: '5.6'
-    implementation "io.ktor:ktor-server-core-jvm:$ktor_version"
-    implementation "io.ktor:ktor-server-content-negotiation-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-content-negotiation-jvm:$ktor_version"
     implementation "io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version"
-    implementation "io.ktor:ktor-server-netty-jvm:$ktor_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
     implementation "io.ktor:ktor-client-cio-jvm:$ktor_version"
 
     implementation 'org.kodein.di:kodein-di:7.16.0'
 
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
-
     // google APIs
     implementation 'com.google.api-client:google-api-client:2.6.0'
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.36.0'
     implementation 'com.google.apis:google-api-services-sheets:v4-rev20230227-2.0.0'
-
-    testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation group: 'io.mockk', name: 'mockk', version: '1.12.4'
