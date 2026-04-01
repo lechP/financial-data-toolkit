@@ -3,8 +3,8 @@ package com.lpi.fdt
 import com.lpi.fdt.config.UploadConfig
 import com.lpi.fdt.config.UploadCoordinates
 import com.lpi.fdt.quotations.currencies.NBPClient
+import com.lpi.fdt.quotations.stocks.LocalStooqClient
 import com.lpi.fdt.quotations.stocks.StocksFacade
-import com.lpi.fdt.quotations.stocks.StooqClient
 import com.lpi.fdt.service.DefaultDataUploadService
 import com.lpi.fdt.sheets.SpreadsheetCoordinates
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ fun main(): Unit = runBlocking {
 
     val dataUploadService = DefaultDataUploadService(
         currencyClient = NBPClient(),
-        stocksFacade = StocksFacade(StooqClient())
+        stocksFacade = StocksFacade(LocalStooqClient())
     )
 
     val config = UploadConfig()

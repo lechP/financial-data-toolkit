@@ -4,6 +4,7 @@ import com.lpi.fdt.config.ktorClient
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import java.io.File
 
 interface StocksClient {
     suspend fun getValueHistory(symbol: String): String
@@ -26,4 +27,16 @@ class DummyStooqClient : StocksClient {
     override suspend fun getValueHistory(symbol: String): String =
         "initial,row,to,be,ignored\r\n2022-08-01,10.00,11.00,9.95,10.20,4000\r\n2022-08-02,10.10,10.10,9.35,9.50,2000"
 
+}
+
+class LocalStooqClient(
+    private val inputDirectory: File = File("input")
+) : StocksClient {
+
+    override suspend fun getValueHistory(symbol: String): String =
+        inputDirectory.resolve(symbol.toStooqFilename()).readText()
+
+    private fun String.toStooqFilename(): String =
+        lowercase()
+            .replace('.', '_') + "_d.csv"
 }
